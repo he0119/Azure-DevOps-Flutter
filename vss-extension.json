@@ -1,20 +1,20 @@
 {
     "manifestVersion": 1,
-    "id": "flutter-task",
+    "id": "flutter-tools",
     "name": "Flutter Tools",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "publisher": "he0119",
     "targets": [
         {
             "id": "Microsoft.VisualStudio.Services"
         }
-    ],    
+    ],
     "description": "Tools for installing flutter.",
     "categories": [
         "Azure Pipelines"
     ],
     "icons": {
-        "default": "images/extension-icon.png"        
+        "default": "images/extension-icon.png"
     },
     "files": [
         {

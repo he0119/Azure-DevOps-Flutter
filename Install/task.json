@@ -27,6 +27,27 @@
                 "beta": "Beta",
                 "stable": "Stable"
             }
+        },
+        {
+            "name": "version",
+            "type": "pickList",
+            "label": "Version",
+            "defaultValue": "latest",
+            "required": true,
+            "helpMarkDown": "Latest version or a custom one.",
+            "options": {
+                "latest": "Latest",
+                "custom": "Custom version"
+            }
+        },
+        {
+            "name": "customVersion",
+            "type": "string",
+            "label": "Custom version",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "The [version](https://flutter.dev/sdk-archive/) of the Flutter SDK.",
+            "visibleRule": "version = custom"
         }
     ],
     "execution": {
