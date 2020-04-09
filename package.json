@@ -1,0 +1,29 @@
+{
+  "name": "azure-devops-extension-flutter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/he0119/azure-devops-extension-flutter.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/he0119/azure-devops-extension-flutter/issues"
+  },
+  "homepage": "https://github.com/he0119/azure-devops-extension-flutter#readme",
+  "dependencies": {
+    "azure-pipelines-task-lib": "^2.9.3"
+  },
+  "devDependencies": {
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^13.11.1",
+    "@types/q": "^1.5.2",
+    "sync-request": "^6.1.0"
+  }
+}

@@ -1,0 +1,37 @@
+{
+    "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
+    "id": "28397f4f-43c3-4395-a953-0bae940401ab",
+    "name": "Install-Flutter",
+    "friendlyName": "Install Flutter",
+    "description": "Install Flutter SDK",
+    "helpMarkDown": "",
+    "category": "Utility",
+    "author": "he0119",
+    "version": {
+        "Major": 0,
+        "Minor": 1,
+        "Patch": 0
+    },
+    "instanceNameFormat": "Install Flutter",
+    "inputs": [
+        {
+            "name": "channel",
+            "type": "pickList",
+            "label": "Channel",
+            "defaultValue": "stable",
+            "required": true,
+            "helpMarkDown": "[Flutter build release channels](https://github.com/flutter/flutter/wiki/Flutter-build-release-channels)",
+            "options": {
+                "master": "Master",
+                "dev": "Dev",
+                "beta": "Beta",
+                "stable": "Stable"
+            }
+        }
+    ],
+    "execution": {
+        "Node10": {
+            "target": "index.js"
+        }
+    }
+}
