@@ -17,6 +17,7 @@
             "env": {
                 "INPUT_CHANNEL": "beta",
                 "INPUT_VERSION": "latest",
+                "AGENT_TEMPDIRECTORY": "${workspaceFolder}/temp"
             },
             "internalConsoleOptions": "openOnSessionStart"
         },

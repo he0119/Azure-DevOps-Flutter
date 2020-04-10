@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "flutter-tools",
     "name": "Flutter Tools",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "publisher": "he0119",
     "targets": [
         {

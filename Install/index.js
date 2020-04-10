@@ -46,33 +46,93 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var tl = __importStar(require("azure-pipelines-task-lib/task"));
+var tasklib = __importStar(require("azure-pipelines-task-lib/task"));
+var toolLib = __importStar(require("azure-pipelines-tool-lib/tool"));
+var path = __importStar(require("path"));
 var node_fetch_1 = __importDefault(require("node-fetch"));
+var TOOL_NAME = 'flutter';
+var TOOL_ENV_NAME = 'FLUTTER_PATH';
 function run() {
     return __awaiter(this, void 0, void 0, function () {
-        var channel, version, customVersion, platform, currentversion, err_1;
+        var channel, version, customVersion, arch, currentversion, toolPath, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 3, , 4]);
-                    channel = tl.getInput('channel', true);
-                    version = tl.getInput('version', true);
-                    customVersion = tl.getInput('customVersion');
-                    platform = getPlatform();
+                    _a.trys.push([0, 8, , 9]);
+                    channel = tasklib.getInput('channel', true);
+                    version = tasklib.getInput('version', true);
+                    customVersion = tasklib.getInput('customVersion');
+                    arch = getPlatform();
+                    currentversion = '';
                     if (!(version === 'latest' && channel)) return [3 /*break*/, 2];
-                    return [4 /*yield*/, getLatestVersion(channel, platform)];
+                    return [4 /*yield*/, getLatestVersion(channel, arch)];
                 case 1:
                     currentversion = _a.sent();
                     console.log(currentversion);
-                    _a.label = 2;
+                    return [3 /*break*/, 3];
                 case 2:
-                    tl.setResult(tl.TaskResult.Succeeded, 'succeeded');
-                    return [3 /*break*/, 4];
+                    if (customVersion) {
+                        currentversion = customVersion;
+                    }
+                    _a.label = 3;
                 case 3:
+                    if (!(channel && currentversion)) return [3 /*break*/, 6];
+                    toolPath = toolLib.findLocalTool(TOOL_NAME, currentversion, arch);
+                    if (!!toolPath) return [3 /*break*/, 5];
+                    return [4 /*yield*/, acquireFlutterSdk(channel, currentversion, arch)];
+                case 4:
+                    toolPath = _a.sent();
+                    _a.label = 5;
+                case 5:
+                    tasklib.debug(toolPath);
+                    // 设置环境变量
+                    toolLib.prependPath(toolPath);
+                    tasklib.setVariable(TOOL_ENV_NAME, toolPath);
+                    return [3 /*break*/, 7];
+                case 6:
+                    tasklib.setResult(tasklib.TaskResult.Failed, 'empty channel or version');
+                    _a.label = 7;
+                case 7:
+                    tasklib.setResult(tasklib.TaskResult.Succeeded, 'succeeded');
+                    return [3 /*break*/, 9];
+                case 8:
                     err_1 = _a.sent();
-                    tl.setResult(tl.TaskResult.Failed, err_1.message);
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
+                    tasklib.setResult(tasklib.TaskResult.Failed, err_1.message);
+                    console.log(err_1);
+                    return [3 /*break*/, 9];
+                case 9: return [2 /*return*/];
+            }
+        });
+    });
+}
+function acquireFlutterSdk(channel, version, arch) {
+    return __awaiter(this, void 0, void 0, function () {
+        var extPath, url, temp, url, temp, toolRoot;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!(arch === 'linux')) return [3 /*break*/, 3];
+                    url = "https://storage.googleapis.com/flutter_infra/releases/" + channel + "/" + arch + "/flutter_" + arch + "_" + version + "-" + channel + ".tar.xz";
+                    return [4 /*yield*/, toolLib.downloadTool(url)];
+                case 1:
+                    temp = _a.sent();
+                    return [4 /*yield*/, toolLib.extractTar(temp)];
+                case 2:
+                    extPath = _a.sent();
+                    return [3 /*break*/, 6];
+                case 3:
+                    url = "https://storage.googleapis.com/flutter_infra/releases/" + channel + "/" + arch + "/flutter_" + arch + "_" + version + "-" + channel + ".zip";
+                    return [4 /*yield*/, toolLib.downloadTool(url)];
+                case 4:
+                    temp = _a.sent();
+                    return [4 /*yield*/, toolLib.extractZip(temp)];
+                case 5:
+                    extPath = _a.sent();
+                    _a.label = 6;
+                case 6:
+                    toolRoot = path.join(extPath, 'flutter/bin');
+                    return [4 /*yield*/, toolLib.cacheDir(toolRoot, TOOL_NAME, version, arch)];
+                case 7: return [2 /*return*/, _a.sent()];
             }
         });
     });
@@ -96,15 +156,15 @@ function getLatestVersion(channel, platform) {
     });
 }
 function getPlatform() {
-    var platform = tl.getPlatform();
+    var platform = tasklib.getPlatform();
     switch (platform) {
-        case tl.Platform.Windows: {
+        case tasklib.Platform.Windows: {
             return 'windows';
         }
-        case tl.Platform.Linux: {
+        case tasklib.Platform.Linux: {
             return 'linux';
         }
-        case tl.Platform.MacOS: {
+        case tasklib.Platform.MacOS: {
             return 'macos';
         }
     }

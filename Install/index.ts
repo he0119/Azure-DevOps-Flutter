@@ -1,27 +1,67 @@
-import * as tl from 'azure-pipelines-task-lib/task';
+import * as tasklib from 'azure-pipelines-task-lib/task';
+import * as toolLib from 'azure-pipelines-tool-lib/tool';
+import * as path from 'path';
 import fetch from 'node-fetch';
+
+const TOOL_NAME: string = 'flutter';
+const TOOL_ENV_NAME: string = 'FLUTTER_PATH';
 
 async function run() {
     try {
         // 输入
-        const channel = tl.getInput('channel', true);
-        const version = tl.getInput('version', true);
-        const customVersion = tl.getInput('customVersion');
+        const channel = tasklib.getInput('channel', true);
+        const version = tasklib.getInput('version', true);
+        const customVersion = tasklib.getInput('customVersion');
 
         // 系统
-        const platform: string = getPlatform();
+        const arch: string = getPlatform();
 
         // 获取最新的版本号
+        let currentversion: string = '';
         if (version === 'latest' && channel) {
-            let currentversion = await getLatestVersion(channel, platform);
+            currentversion = await getLatestVersion(channel, arch);
             console.log(currentversion);
         }
+        else if (customVersion) {
+            currentversion = customVersion;
+        }
 
-        tl.setResult(tl.TaskResult.Succeeded, 'succeeded');
+        // 下载 SDK
+        if (channel && currentversion) {
+            let toolPath = toolLib.findLocalTool(TOOL_NAME, currentversion, arch);
+            if (!toolPath) {
+                toolPath = await acquireFlutterSdk(channel, currentversion, arch);
+            }
+            tasklib.debug(toolPath);
+            // 设置环境变量
+            toolLib.prependPath(toolPath);
+            tasklib.setVariable(TOOL_ENV_NAME, toolPath);
+        } else {
+            tasklib.setResult(tasklib.TaskResult.Failed, 'empty channel or version')
+        }
+
+        tasklib.setResult(tasklib.TaskResult.Succeeded, 'succeeded');
     }
     catch (err) {
-        tl.setResult(tl.TaskResult.Failed, err.message);
+        tasklib.setResult(tasklib.TaskResult.Failed, err.message);
+        console.log(err);
     }
+}
+
+async function acquireFlutterSdk(channel: string, version: string, arch: string) {
+    let extPath: string;
+    if (arch === 'linux') {
+        const url = `https://storage.googleapis.com/flutter_infra/releases/${channel}/${arch}/flutter_${arch}_${version}-${channel}.tar.xz`;
+        const temp: string = await toolLib.downloadTool(url);
+        extPath = await toolLib.extractTar(temp);
+    }
+    else {
+        const url = `https://storage.googleapis.com/flutter_infra/releases/${channel}/${arch}/flutter_${arch}_${version}-${channel}.zip`;
+        const temp: string = await toolLib.downloadTool(url);
+        extPath = await toolLib.extractZip(temp);
+    }
+    let toolRoot = path.join(extPath, 'flutter/bin');
+    return await toolLib.cacheDir(toolRoot, TOOL_NAME, version, arch);
 }
 
 async function getLatestVersion(channel: string, platform: string): Promise<string> {
@@ -35,15 +75,15 @@ async function getLatestVersion(channel: string, platform: string): Promise<stri
 }
 
 function getPlatform(): string {
-    const platform: tl.Platform = tl.getPlatform();
+    const platform: tasklib.Platform = tasklib.getPlatform();
     switch (platform) {
-        case tl.Platform.Windows: {
+        case tasklib.Platform.Windows: {
             return 'windows';
         }
-        case tl.Platform.Linux: {
+        case tasklib.Platform.Linux: {
             return 'linux';
         }
-        case tl.Platform.MacOS: {
+        case tasklib.Platform.MacOS: {
             return 'macos';
         }
     }
