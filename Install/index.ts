@@ -28,12 +28,13 @@ async function run() {
 
         // 下载 SDK
         if (channel && currentversion) {
-            let toolPath = toolLib.findLocalTool(TOOL_NAME, currentversion, arch);
-            if (!toolPath) {
-                toolPath = await acquireFlutterSdk(channel, currentversion, arch);
+            let toolRoot = toolLib.findLocalTool(TOOL_NAME, currentversion, arch);
+            if (!toolRoot) {
+                toolRoot = await acquireFlutterSdk(channel, currentversion, arch);
             }
-            tasklib.debug(toolPath);
+            tasklib.debug(toolRoot);
             // 设置环境变量
+            let toolPath = path.join(toolRoot, 'flutter/bin');
             toolLib.prependPath(toolPath);
             tasklib.setVariable(TOOL_ENV_NAME, toolPath);
         } else {
@@ -60,8 +61,7 @@ async function acquireFlutterSdk(channel: string, version: string, arch: string)
         const temp: string = await toolLib.downloadTool(url);
         extPath = await toolLib.extractZip(temp);
     }
-    let toolRoot = path.join(extPath, 'flutter/bin');
-    return await toolLib.cacheDir(toolRoot, TOOL_NAME, version, arch);
+    return await toolLib.cacheDir(extPath, TOOL_NAME, version, arch);
 }
 
 async function getLatestVersion(channel: string, platform: string): Promise<string> {

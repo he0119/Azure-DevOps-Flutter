@@ -54,7 +54,7 @@ var TOOL_NAME = 'flutter';
 var TOOL_ENV_NAME = 'FLUTTER_PATH';
 function run() {
     return __awaiter(this, void 0, void 0, function () {
-        var channel, version, customVersion, arch, currentversion, toolPath, err_1;
+        var channel, version, customVersion, arch, currentversion, toolRoot, toolPath, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -77,15 +77,15 @@ function run() {
                     _a.label = 3;
                 case 3:
                     if (!(channel && currentversion)) return [3 /*break*/, 6];
-                    toolPath = toolLib.findLocalTool(TOOL_NAME, currentversion, arch);
-                    if (!!toolPath) return [3 /*break*/, 5];
+                    toolRoot = toolLib.findLocalTool(TOOL_NAME, currentversion, arch);
+                    if (!!toolRoot) return [3 /*break*/, 5];
                     return [4 /*yield*/, acquireFlutterSdk(channel, currentversion, arch)];
                 case 4:
-                    toolPath = _a.sent();
+                    toolRoot = _a.sent();
                     _a.label = 5;
                 case 5:
-                    tasklib.debug(toolPath);
-                    // 设置环境变量
+                    tasklib.debug(toolRoot);
+                    toolPath = path.join(toolRoot, 'flutter/bin');
                     toolLib.prependPath(toolPath);
                     tasklib.setVariable(TOOL_ENV_NAME, toolPath);
                     return [3 /*break*/, 7];
@@ -107,7 +107,7 @@ function run() {
 }
 function acquireFlutterSdk(channel, version, arch) {
     return __awaiter(this, void 0, void 0, function () {
-        var extPath, url, temp, url, temp, toolRoot;
+        var extPath, url, temp, url, temp;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -129,9 +129,7 @@ function acquireFlutterSdk(channel, version, arch) {
                 case 5:
                     extPath = _a.sent();
                     _a.label = 6;
-                case 6:
-                    toolRoot = path.join(extPath, 'flutter/bin');
-                    return [4 /*yield*/, toolLib.cacheDir(toolRoot, TOOL_NAME, version, arch)];
+                case 6: return [4 /*yield*/, toolLib.cacheDir(extPath, TOOL_NAME, version, arch)];
                 case 7: return [2 /*return*/, _a.sent()];
             }
         });
