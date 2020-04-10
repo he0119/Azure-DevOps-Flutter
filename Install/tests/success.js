@@ -5,5 +5,6 @@ var path = require("path");
 var taskPath = path.join(__dirname, '..', 'index.js');
 var tmr = new tmrm.TaskMockRunner(taskPath);
 tmr.setInput('channel', 'stable');
+tmr.setInput('version', 'latest');
 tmr.run();
 //# sourceMappingURL=success.js.map

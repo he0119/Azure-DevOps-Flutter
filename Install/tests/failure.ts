@@ -6,5 +6,6 @@ let taskPath = path.join(__dirname, '..', 'index.js');
 let tmr: tmrm.TaskMockRunner = new tmrm.TaskMockRunner(taskPath);
 
 tmr.setInput('channel', 'master');
+tmr.setInput('version', 'latest');
 
 tmr.run();

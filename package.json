@@ -18,14 +18,15 @@
   },
   "homepage": "https://github.com/he0119/azure-devops-extension-flutter#readme",
   "dependencies": {
-    "azure-pipelines-task-lib": "^2.9.3"
+    "azure-pipelines-task-lib": "^2.9.3",
+    "node-fetch": "^2.6.0"
   },
   "devDependencies": {
     "@types/mocha": "^7.0.2",
     "@types/node": "^13.11.1",
+    "@types/node-fetch": "^2.5.5",
     "@types/q": "^1.5.2",
     "mocha": "^7.1.1",
-    "sync-request": "^6.1.0",
-    "typescript": "^3.8.3"
+    "sync-request": "^6.1.0"
   }
 }

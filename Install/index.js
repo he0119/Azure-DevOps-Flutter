@@ -35,28 +35,79 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var tl = require("azure-pipelines-task-lib/task");
+var tl = __importStar(require("azure-pipelines-task-lib/task"));
+var node_fetch_1 = __importDefault(require("node-fetch"));
 function run() {
     return __awaiter(this, void 0, void 0, function () {
-        var channel;
+        var channel, version, customVersion, platform, currentversion, err_1;
         return __generator(this, function (_a) {
-            try {
-                channel = tl.getInput('channel', true);
-                console.log(channel);
-                if (channel == 'stable') {
-                    tl.setResult(tl.TaskResult.Succeeded, 'Stable Channel');
-                    return [2 /*return*/];
-                }
-                console.log('Hello', channel);
-                tl.setResult(tl.TaskResult.Failed, 'failed');
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 3, , 4]);
+                    channel = tl.getInput('channel', true);
+                    version = tl.getInput('version', true);
+                    customVersion = tl.getInput('customVersion');
+                    platform = getPlatform();
+                    if (!(version === 'latest' && channel)) return [3 /*break*/, 2];
+                    return [4 /*yield*/, getLatestVersion(channel, platform)];
+                case 1:
+                    currentversion = _a.sent();
+                    console.log(currentversion);
+                    _a.label = 2;
+                case 2:
+                    tl.setResult(tl.TaskResult.Succeeded, 'succeeded');
+                    return [3 /*break*/, 4];
+                case 3:
+                    err_1 = _a.sent();
+                    tl.setResult(tl.TaskResult.Failed, err_1.message);
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
             }
-            catch (err) {
-                tl.setResult(tl.TaskResult.Failed, err.message);
-            }
-            return [2 /*return*/];
         });
     });
+}
+function getLatestVersion(channel, platform) {
+    return __awaiter(this, void 0, void 0, function () {
+        var releasesUrl;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    releasesUrl = "https://storage.googleapis.com/flutter_infra/releases/releases_" + platform + ".json";
+                    return [4 /*yield*/, node_fetch_1.default(releasesUrl).then(function (res) { return res.json(); })
+                            .then(function (json) {
+                            var currentHash = json.current_release[channel];
+                            var current = json.releases.find(function (item) { return item.hash === currentHash; });
+                            return current.version;
+                        })];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
+function getPlatform() {
+    var platform = tl.getPlatform();
+    switch (platform) {
+        case tl.Platform.Windows: {
+            return 'windows';
+        }
+        case tl.Platform.Linux: {
+            return 'linux';
+        }
+        case tl.Platform.MacOS: {
+            return 'macos';
+        }
+    }
 }
 run();
 //# sourceMappingURL=index.js.map
