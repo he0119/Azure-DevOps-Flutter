@@ -43,11 +43,13 @@ function run() {
         return __generator(this, function (_a) {
             try {
                 channel = tl.getInput('channel', true);
+                console.log(channel);
                 if (channel == 'stable') {
                     tl.setResult(tl.TaskResult.Succeeded, 'Stable Channel');
                     return [2 /*return*/];
                 }
                 console.log('Hello', channel);
+                tl.setResult(tl.TaskResult.Failed, 'failed');
             }
             catch (err) {
                 tl.setResult(tl.TaskResult.Failed, err.message);
@@ -57,3 +59,4 @@ function run() {
     });
 }
 run();
+//# sourceMappingURL=index.js.map

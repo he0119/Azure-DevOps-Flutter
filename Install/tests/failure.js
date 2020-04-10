@@ -6,3 +6,4 @@ var taskPath = path.join(__dirname, '..', 'index.js');
 var tmr = new tmrm.TaskMockRunner(taskPath);
 tmr.setInput('channel', 'master');
 tmr.run();
+//# sourceMappingURL=failure.js.map

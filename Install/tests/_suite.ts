@@ -24,7 +24,7 @@ describe('Sample task tests', function () {
         assert.equal(tr.warningIssues.length, 0, "should have no warnings");
         assert.equal(tr.errorIssues.length, 0, "should have no errors");
         console.log(tr.stdout);
-        assert.equal(tr.stdout.indexOf('Hello stable') >= 0, true, "should display Hello stable");
+        assert.equal(tr.stdout.indexOf('stable') >= 0, true, "should display stable");
         done();
     });
 
@@ -39,8 +39,8 @@ describe('Sample task tests', function () {
         assert.equal(tr.succeeded, false, 'should have failed');
         assert.equal(tr.warningIssues, 0, "should have no warnings");
         assert.equal(tr.errorIssues.length, 1, "should have 1 error issue");
-        assert.equal(tr.errorIssues[0], 'Bad input was given', 'error issue output');
-        assert.equal(tr.stdout.indexOf('Hello master'), -1, "Should not display Hello master");
+        assert.equal(tr.errorIssues[0], 'failed', 'error issue output');
+        assert.equal(tr.stdout.indexOf('master') >= 0, true, "Should display master");
         done();
     });
 });
