@@ -17,11 +17,7 @@
     "url": "https://github.com/he0119/azure-devops-extension-flutter/issues"
   },
   "homepage": "https://github.com/he0119/azure-devops-extension-flutter#readme",
-  "dependencies": {
-    "azure-pipelines-task-lib": "^2.9.3",
-    "azure-pipelines-tool-lib": "^0.12.0",
-    "node-fetch": "^2.6.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/mocha": "^7.0.2",
     "@types/node": "^13.11.1",
